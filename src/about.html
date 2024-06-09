@@ -33,7 +33,7 @@
   <!-- Menu Bar -->
   <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="#">
+      <a class="navbar-item" href="#" id="home-link">
         <strong>Ekalavya</strong>
       </a>
       <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -45,7 +45,7 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
       <div class="navbar-end">
-        <a class="navbar-item" href="#">
+        <a class="navbar-item" href="#" id="about-link">
           About us
         </a>
 
@@ -53,11 +53,11 @@
           Register
         </a>
 
-        <a class="navbar-item" href="#">
+        <a class="navbar-item" href="#" id="resources-link">
           Resources
         </a>
 
-        <a class="navbar-item" href="#">
+        <a class="navbar-item" href="#" id="login-link">
           Login
         </a>
       </div>
@@ -111,7 +111,10 @@
     const { ipcRenderer } = require('electron');
 
     document.getElementById('register-link').addEventListener('click', function() {
-      ipcRenderer.send('navigate-to-register');
+      ipcRenderer.send('navigate-to-register');})
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
     });
 
     // Hamburger menu toggle
