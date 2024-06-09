@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 3: Call for Help</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 3: Call for Help
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Call for Help</h1>
+        <div>
+          <label>Ask for Help (switch 3):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="switch2" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="switch2" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Mic/Voice Analyzer (Help Help Help) :</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="help" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="help" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluateHelp()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluateHelp() {
+      const switch2 = document.querySelector('input[name="switch2"]:checked');
+      const help = document.querySelector('input[name="help"]:checked');
+      const output = document.getElementById('output');
+
+      if (switch2 && switch2.value == 1 && help && help.value == 1) {
+        output.innerText = "Help requested successfully, proceed to next scene";
+        ipcRenderer.send('navigate-to', 'scene4.html');
+      } else if (switch2 && switch2.value == 1 && help && help.value == 0) {
+        output.innerText = "You have asked for help by pressing the button but you should also shout help three times. Show the video for calling for help.";
+        // Show video
+      } else if (switch2 && switch2.value == 0 && help && help.value == 1) {
+        output.innerText = "You should ask for help by pressing the button and also shout for help three times. Show the video for calling for help.";
+        // Show video
+      } else if (!switch2 || !help || (switch2.value == 0 && help.value == 0)) {
+        output.innerText = "You should ask for help by pressing the button and also shout for help three times. Show the video for calling for help.";
+        // Show video
+      }
+    }
+  </script>
+</body>
+</html>

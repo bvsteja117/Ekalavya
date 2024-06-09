@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 8: AED Pad Placement</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 8: AED Pad Placement
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">AED Pad Placement</h1>
+        <div>
+          <label>Touch Sensor on Chest (Left):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="left_sensor" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="left_sensor" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Touch Sensor on Chest (Right):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="right_sensor" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="right_sensor" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluatePadPlacement()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluatePadPlacement() {
+      const left_sensor = document.querySelector('input[name="left_sensor"]:checked');
+      const right_sensor = document.querySelector('input[name="right_sensor"]:checked');
+      const output = document.getElementById('output');
+
+      if (left_sensor && left_sensor.value == 1 && right_sensor && right_sensor.value == 1) {
+        output.innerText = "Clear the patient. Analyzing the rhythm. Preparing for shock. Please press the shock button.";
+        ipcRenderer.send('navigate-to', 'scene9.html');
+      } else if ((left_sensor && left_sensor.value == 1 && (!right_sensor || right_sensor.value == 0)) ||
+                 (right_sensor && right_sensor.value == 1 && (!left_sensor || left_sensor.value == 0))) {
+        output.innerText = "Please check the placement of the pad on the side where input is zero.";
+      } else if (left_sensor && left_sensor.value == 0 && right_sensor && right_sensor.value == 0) {
+        output.innerText = "Please check the placement of the pads on the chest as shown in the image on the screen.";
+        // Show image
+      }
+    }
+  </script>
+</body>
+</html>

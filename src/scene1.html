@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 1: Assessment of Scene</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 1: Assessment of Scene
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Assessment of Scene</h1>
+        <div>
+          <label>Is the Scene safe to do CPR (switch 1):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="switch1" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="switch1" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Voice Analyzer/Mic (scene is safe):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="voice" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="voice" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluateScene()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluateScene() {
+      const switch1 = document.querySelector('input[name="switch1"]:checked');
+      const voice = document.querySelector('input[name="voice"]:checked');
+      const output = document.getElementById('output');
+
+      if (switch1 && switch1.value == 1 && voice && voice.value == 1) {
+        output.innerText = "Assessment of scene safety done";
+        // Play sound here if needed
+        ipcRenderer.send('navigate-to', 'scene2.html');
+      } else if (switch1 && switch1.value == 1 && voice && voice.value == 0) {
+        output.innerText = "Assessment of scene safety done but button to document it was not pressed";
+        // Do not proceed to next scene
+      } else if (!switch1 || !voice || (switch1.value == 0 && voice.value == 0)) {
+        output.innerText = "Assessment of scene safety not done. Please review the video on scene safety.";
+        // Show video
+      }
+    }
+  </script>
+</body>
+</html>

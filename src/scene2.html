@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 2: Check for Response</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 2: Check for Response
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Check for Response</h1>
+        <div>
+          <label>Touch sensor (either shoulder) (switch 2):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="shoulder" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="shoulder" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Mic/Voice Analyzer (are you alright):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="voice" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="voice" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluateResponse()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluateResponse() {
+      const shoulder = document.querySelector('input[name="shoulder"]:checked');
+      const voice = document.querySelector('input[name="voice"]:checked');
+      const output = document.getElementById('output');
+
+      if (shoulder && shoulder.value == 1 && voice && voice.value == 1) {
+        output.innerText = "Patient assessment complete, proceed to next scene";
+        ipcRenderer.send('navigate-to', 'scene3.html');
+      } else if (shoulder && shoulder.value == 1 && voice && voice.value == 0) {
+        output.innerText = "Patient assessment done by tapping on shoulder but you should ask him 'are you alright'. Repeat the process. Video of patient assessment should be displayed.";
+        // Show video
+      } else if (!shoulder || !voice || (shoulder.value == 0 && voice.value == 0)) {
+        output.innerText = "Patient assessment is not done. Please tap on the shoulder and ask 'are you alright'. Repeat the process. Video of patient assessment should be displayed.";
+        // Show video
+      } else if (shoulder && shoulder.value == 0 && voice && voice.value == 1) {
+        output.innerText = "Patient assessment is not done properly. Please tap on the shoulder while you ask 'are you alright'. Repeat the process. Video of patient assessment should be displayed.";
+        // Show video
+      }
+    }
+  </script>
+</body>
+</html>

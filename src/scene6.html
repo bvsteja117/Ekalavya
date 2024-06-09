@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 6: Call for AED</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 6: Ask for AED
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Call for AED</h1>
+        <div>
+          <label>Button 3 (Ask around for AED):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="button3" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="button3" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Mic/Voice (Get an AED):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="voice" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="voice" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluateCallForAED()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluateCallForAED() {
+      const button3 = document.querySelector('input[name="button3"]:checked');
+      const voice = document.querySelector('input[name="voice"]:checked');
+      const output = document.getElementById('output');
+
+      // Case 1
+      if (button3 && button3.value == 1 && voice && voice.value == 1) {
+        output.innerText = "AED door opens";
+        // Signal to AED cover to open
+        // Navigate to Scene 7 or perform any additional actions
+      }
+      // Case 2
+      else if (button3 && button3.value == 0 && voice && voice.value == 1) {
+        output.innerText = "You need to press the call for AED button while asking for AED.";
+      }
+      // Case 3
+      else if (button3 && button3.value == 1 && voice && voice.value == 0) {
+        output.innerText = "You need to say 'Get an AED' while pressing the button for AED.";
+      }
+      // Case 4
+      else if (button3 && button3.value == 0 && voice && voice.value == 0) {
+        output.innerText = "You need to press the call for AED button and say 'Get an AED'.";
+      }
+    }
+  </script>
+</body>
+</html>

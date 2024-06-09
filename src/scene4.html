@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Scene 4: Chest Compressions</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .navbar-menu.is-active {
+      display: block !important;
+    }
+    .navbar-menu.is-active .navbar-end {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Menu Bar -->
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="#" id="home-link">
+        <strong>Ekalavya</strong>
+      </a>
+      <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+  
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">
+          About us
+        </a>
+  
+        <a class="navbar-item" id="register-link" href="#">
+          Register
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Resources
+        </a>
+  
+        <a class="navbar-item" href="#">
+          Login
+        </a>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Hero Section -->
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <p class="title">
+        Scene 4: Chest Compressions
+      </p>
+    </div>
+  </section>
+
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Chest Compressions</h1>
+        <div>
+          <label>Rate:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="rate" value="1">
+              Frequency >= 2 Hz
+            </label>
+            <label class="radio">
+              <input type="radio" name="rate" value="0">
+              Frequency < 2 Hz
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Depth Change from Baseline:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="depth" value="0">
+              < 4
+            </label>
+            <label class="radio">
+              <input type="radio" name="depth" value="1">
+              4 to 7
+            </label>
+            <label class="radio">
+              <input type="radio" name="depth" value="2">
+              > 7
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Recoil:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="recoil" value="1">
+              Within ±1 cm from baseline
+            </label>
+            <label class="radio">
+              <input type="radio" name="recoil" value="0">
+              >1 cm from baseline
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Interruptions in Compressions:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="interruptions" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="interruptions" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Mic/Voice Analyzer (counts from 1001 to 1030 in words):</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="voice" value="1">
+              Yes
+            </label>
+            <label class="radio">
+              <input type="radio" name="voice" value="0">
+              No
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Camera - Head Position:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="head_position" value="1">
+              Angle within range
+            </label>
+            <label class="radio">
+              <input type="radio" name="head_position" value="0">
+              Angle out of range
+            </label>
+          </div>
+        </div>
+        <div>
+          <label>Camera - Hand Angle:</label>
+          <div class="control">
+            <label class="radio">
+              <input type="radio" name="hand_angle" value="1">
+              Angle within range
+            </label>
+            <label class="radio">
+              <input type="radio" name="hand_angle" value="0">
+              Angle out of range
+            </label>
+          </div>
+        </div>
+        <button class="button is-primary" onclick="evaluateCompressions()">Evaluate</button>
+        <p id="output"></p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('register-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-register');
+    });
+
+    document.getElementById('home-link').addEventListener('click', function() {
+      ipcRenderer.send('navigate-to-home');
+    });
+
+    // Hamburger menu toggle
+    document.addEventListener('DOMContentLoaded', () => {
+      const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+      if (navbarBurgers.length > 0) {
+        navbarBurgers.forEach(el => {
+          el.addEventListener('click', () => {
+            const target = el.dataset.target;
+            const $target = document.getElementById(target);
+
+            el.classList.toggle('is-active');
+            $target.classList.toggle('is-active');
+          });
+        });
+      }
+    });
+
+    function evaluateCompressions() {
+      const rate = document.querySelector('input[name="rate"]:checked');
+      const depth = document.querySelector('input[name="depth"]:checked');
+      const recoil = document.querySelector('input[name="recoil"]:checked');
+      const interruptions = document.querySelector('input[name="interruptions"]:checked');
+      const voice = document.querySelector('input[name="voice"]:checked');
+      const head_position = document.querySelector('input[name="head_position"]:checked');
+      const hand_angle = document.querySelector('input[name="hand_angle"]:checked');
+      const output = document.getElementById('output');
+
+      // Case 1
+      if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+          voice && voice.value == 1 && head_position && head_position.value == 1 &&
+          hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "Successfully completed chest compressions, proceed to next step";
+        ipcRenderer.send('navigate-to', 'scene5.html');
+      } 
+      // Case 2
+      else if (rate && rate.value == 0 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "Compression rate too slow. Follow the audio beat of 'Stayin' Alive' by BeeGees for a rate of 120 times per minute.";
+        setTimeout(() => {
+          // Play "Stayin' Alive" song
+        }, 10000);
+      } 
+      // Case 3
+      else if (rate && rate.value == 1 && depth && depth.value == 0 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "You are not compressing with enough force, you need to increase the force.";
+      } 
+      // Case 4
+      else if (rate && rate.value == 1 && depth && depth.value == 2 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "You are compressing very hard, please decrease the depth of compressions.";
+      } 
+      // Case 5
+      else if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 0 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "You should allow adequate recoil after each compression. Please do not lift the hand away from the mannequin while allowing recoil.";
+        // Show video of correct technique
+      } 
+      // Case 6
+      else if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+               voice && voice.value == 0 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "You need to count 1001 to 1030 loudly.";
+      } 
+      // Case 7
+      else if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 0 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 1) {
+        output.innerText = "Head position is not right. Keep the head in line with wrist and hands straight as shown in the figure.";
+        // Show figure of proper head position
+      } 
+      // Case 8
+      else if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 0 && interruptions && interruptions.value == 1) {
+        output.innerText = "Hand position is not right. Keep the head in line with wrist and hands straight as shown in the figure.";
+        // Show figure of proper hand position
+      } 
+      // Case 9
+      else if (rate && rate.value == 1 && depth && depth.value == 1 && recoil && recoil.value == 1 &&
+               voice && voice.value == 1 && head_position && head_position.value == 1 &&
+               hand_angle && hand_angle.value == 1 && interruptions && interruptions.value == 0) {
+        output.innerText = "There should not be any interruptions in compression for more than 10 seconds at any time of compressions.";
+      }
+    }
+  </script>
+</body>
+</html>
