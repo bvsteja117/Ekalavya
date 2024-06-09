@@ -57,14 +57,26 @@ ipcMain.on('navigate-to-register', () => {
   }
 });
 
-ipcMain.on('navigate-to', (event, nextScene) => {
+ipcMain.on('navigate-to-resources', () => {
   if (mainWindow) {
-    mainWindow.loadFile(path.join(__dirname, nextScene));
+    mainWindow.loadFile(path.join(__dirname, 'resources.html'));
   }
 });
 
-ipcMain.on('navigate-to-scene1', (event, nextScene) => {
+ipcMain.on('navigate-to-login', () => {
+  if (mainWindow) {
+    mainWindow.loadFile(path.join(__dirname, 'login.html'));
+  }
+});
+
+ipcMain.on('navigate-to-scene1', () => {
   if (mainWindow) {
     mainWindow.loadFile(path.join(__dirname, 'scene1.html'));
+  }
+});
+
+ipcMain.on('navigate-to', (event, nextScene) => {
+  if (mainWindow) {
+    mainWindow.loadFile(path.join(__dirname, nextScene));
   }
 });
