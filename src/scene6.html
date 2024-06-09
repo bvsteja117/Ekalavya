@@ -137,6 +137,7 @@
       // Case 1
       if (button3 && button3.value == 1 && voice && voice.value == 1) {
         output.innerText = "AED door opens";
+        ipcRenderer.send('navigate-to', 'scene7.html');
         // Signal to AED cover to open
         // Navigate to Scene 7 or perform any additional actions
       }
