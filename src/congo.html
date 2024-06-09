@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Congratulations</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+  <style>
+    .content-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Content Section -->
+  <section class="section">
+    <div class="container">
+      <div class="content-section">
+        <h1 class="title">Congratulations!</h1>
+        <p>You have successfully completed the training.</p>
+        <button class="button is-primary" onclick="goBackHome()">Go Back to Home Page</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    function goBackHome() {
+      ipcRenderer.send('navigate-to', 'index.html');
+    }
+  </script>
+</body>
+</html>

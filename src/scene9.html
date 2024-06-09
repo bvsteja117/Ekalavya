@@ -123,7 +123,7 @@
 
       if (shock_button && shock_button.value == 1) {
         output.innerText = "Shock delivered. Continue CPR.";
-        ipcRenderer.send('navigate-to', 'scene9.html');
+        ipcRenderer.send('navigate-to', 'congo.html');
         // Proceed to next step or instruction
       } else if (shock_button && shock_button.value == 0) {
         output.innerText = "Please press the shock button.";
